@@ -1,0 +1,17 @@
+# ROS generated folders - never push these
+build/
+install/
+log/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# ROS logs
+*.bag
+*.log
