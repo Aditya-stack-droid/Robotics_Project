@@ -1,0 +1,40 @@
+name: ROS2 Turtle Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup ROS2 Humble
+      run: |
+        sudo apt update
+        sudo apt install -y software-properties-common
+        sudo add-apt-repository universe
+        sudo apt update
+        sudo apt install -y curl gnupg lsb-release
+
+        sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | sudo apt-key add -
+        echo "deb http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros2.list
+
+        sudo apt update
+        sudo apt install -y ros-humble-desktop python3-colcon-common-extensions
+
+    - name: Build workspace
+      run: |
+        source /opt/ros/humble/setup.bash
+        colcon build
+
+    - name: Run turtle node test
+      run: |
+        source /opt/ros/humble/setup.bash
+        source install/setup.bash
+
+        # Run node for 5 seconds (so CI doesn't hang)
+        timeout 5 ros2 run turtle_controller controller
